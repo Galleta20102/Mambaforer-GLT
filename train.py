@@ -86,7 +86,7 @@ parser.add_argument('--save_model_interval', type=int, default=10000)
 parser.add_argument('--position_embedding', default='sine', type=str, choices=('sine', 'learned'),
                         help="Type of positional embedding to use on top of the image features")
 parser.add_argument('--hidden_dim', default=512, type=int,
-                        help="Size of the embeddings (dimension of the transformer)")
+                        help="Size of the embeddings (dimension of the mambaformer)")
 parser.add_argument('--resume_iter', type=int, default=None,
                     help='Iteration to resume from')
 
@@ -134,7 +134,7 @@ style_iter = iter(data.DataLoader(
     num_workers=args.n_threads))
 
 optimizer = torch.optim.Adam([ 
-                              {'params': network.module.transformer.parameters()},
+                              {'params': network.module.mambaformer.parameters()},
                               {'params': network.module.decode.parameters()},
                               {'params': network.module.embedding.parameters()},        
                               ], lr=args.lr)
@@ -149,7 +149,7 @@ if args.resume_iter is not None:
     mbfr_path = '{:s}/mambaformer_iter_{:d}.pth'.format(args.save_dir, start_iter)
     if os.path.exists(mbfr_path):
         state_dict = torch.load(mbfr_path)
-        network.module.transformer.load_state_dict(state_dict)
+        network.module.mambaformer.load_state_dict(state_dict)
         print(f"Loaded mambaformer from {mbfr_path}")
     
     # load decoder
@@ -210,11 +210,11 @@ for i in tqdm(range(start_iter, args.max_iter), initial=start_iter, total=args.m
     writer.add_scalar('total_loss', loss.sum().item(), i + 1)
 
     if (i + 1) % args.save_model_interval == 0 or (i + 1) == args.max_iter:
-        state_dict = network.module.transformer.state_dict()
+        state_dict = network.module.mambaformer.state_dict()
         for key in state_dict.keys():
             state_dict[key] = state_dict[key].to(torch.device('cpu'))
         torch.save(state_dict,
-                   '{:s}/transformer_iter_{:d}.pth'.format(args.save_dir,
+                   '{:s}/mambaformer_iter_{:d}.pth'.format(args.save_dir,
                                                            i + 1))
 
         state_dict = network.module.decode.state_dict()

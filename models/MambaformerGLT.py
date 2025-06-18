@@ -135,9 +135,9 @@ class MLP(nn.Module):
             x = F.relu(layer(x)) if i < self.num_layers - 1 else layer(x)
         return x
 class mambaformerGLT(nn.Module):
-    """ This is the style transform transformer module """
+    """ This is the style transform mambaformer module """
     
-    def __init__(self,encoder,decoder,PatchEmbed, transformer,args):
+    def __init__(self,encoder,decoder,PatchEmbed, mambaformer,args):
 
         super().__init__()
         enc_layers = list(encoder.children())
@@ -152,8 +152,8 @@ class mambaformerGLT(nn.Module):
                 param.requires_grad = False
 
         self.mse_loss = nn.MSELoss()
-        self.transformer = transformer
-        hidden_dim = transformer.d_model       
+        self.mambaformer = mambaformer
+        hidden_dim = mambaformer.d_model       
         self.decode = decoder
         self.embedding = PatchEmbed
 
@@ -217,12 +217,12 @@ class mambaformerGLT(nn.Module):
         style = self.embedding(samples_s.tensors)
         content = self.embedding(samples_c.tensors)
         
-        # postional embedding is calculated in transformer.py
+        # postional embedding is calculated in mambaformer.py
         pos_s = None
         pos_c = None
 
         mask = None
-        hs = self.transformer(style, mask , content, pos_c, pos_s)   
+        hs = self.mambaformer(style, mask , content, pos_c, pos_s)   
         Ics = self.decode(hs)
 
         Ics_feats = self.encode_with_intermediate(Ics)
@@ -233,8 +233,8 @@ class mambaformerGLT(nn.Module):
             loss_s += self.calc_style_loss(Ics_feats[i], style_feats[i])
             
         
-        Icc = self.decode(self.transformer(content, mask , content, pos_c, pos_c))
-        Iss = self.decode(self.transformer(style, mask , style, pos_s, pos_s))    
+        Icc = self.decode(self.mambaformer(content, mask , content, pos_c, pos_c))
+        Iss = self.decode(self.mambaformer(style, mask , style, pos_s, pos_s))    
 
         #Identity losses lambda 1    
         loss_lambda1 = self.calc_content_loss(Icc,content_input)+self.calc_content_loss(Iss,style_input)
