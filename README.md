@@ -50,7 +50,7 @@ $ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
     ```
 
 ## Getting Dataset
-Download style and content datasets then put into the folder `/datasets` .<br>
+Download style and content datasets then put into the folder `datasets/` .<br>
 Style image dataset is WikiArt collected from [WIKIART](https://www.wikiart.org/) - [download](https://www.kaggle.com/datasets/steubk/wikiart)<br>
 Content image dataset is COCO2014 - [download](https://cocodataset.org/#download)<br><br>
 
@@ -58,8 +58,8 @@ Directory structure may be like:
 ```
 Mambaformer-GLT/
 ├── datasets/    # PLEASE PUT DATASETS IN HERE
-│   ├── coco2014/
-│   └── wikiart/
+│   ├── coco2014/　　# CONTENT IMAGE DATASET
+│   └── wikiart/　　# STYLE IMAGE DATASET
 ├── eval/    # code for evaluation
 │   ├── calc_params.py
 │   ├── copy_input.py
@@ -67,6 +67,7 @@ Mambaformer-GLT/
 │   └── ...
 ├── figure/    # some figures for document
 ├── models/    # Mambaformer-GLT model code
+│   ├── pretrained/
 │   ├── Mambaformer.py
 │   ├── MambaformerGLT.py
 │   └── Vit_helper.py
@@ -77,7 +78,12 @@ Mambaformer-GLT/
 └── train.py
 ```
 ## Testing
-<!--Pretrained models: <br>-->
+You can download pretrained models, and put them into `models/pretrained/` :
+- [vgg_normalised.pth](https://drive.google.com/file/d/1Zk4atdvgMJCQhJIhIHS0rNBNzaix-mQZ/view?usp=sharing) 
+- [embedding_iter_160000](https://drive.google.com/file/d/1OZQH8Dg6CG-B2V7d0yFgDVMA8bHB6BM1/view?usp=sharing)
+- [decoder_iter_160000](https://drive.google.com/file/d/1HmlJHQ11-h-9iYm1TY0I1c-42cbSxCAp/view?usp=sharing)
+- [mambaformer_iter_160000](https://drive.google.com/file/d/16FeHGZqg8lTqPNbJhZTZGudZiD9n5ZSy/view?usp=sharing)<br>
+
 To transfer images by content and style images, use command to test our model :
 ```
 $ python test.py \

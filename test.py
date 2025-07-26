@@ -64,10 +64,10 @@ parser.add_argument('--style_dir', type=str,
                     help='Directory path to a batch of style images')
 parser.add_argument('--output', type=str, default='output',
                     help='Directory to save the output image(s)')
-parser.add_argument('--vgg', type=str, default='./experiments/vgg_normalised.pth')
-parser.add_argument('--decoder_path', type=str, default='experiments/decoder_iter_160000.pth') 
-parser.add_argument('--mbfr_path', type=str, default='experiments/transformer_iter_160000.pth')
-parser.add_argument('--embedding_path', type=str, default='experiments/embedding_iter_160000.pth')
+parser.add_argument('--vgg', type=str, default='./models/pretrained/vgg_normalised.pth')
+parser.add_argument('--decoder_path', type=str, default='./models/pretrained/decoder_iter_160000.pth') 
+parser.add_argument('--mbfr_path', type=str, default='./models/pretrained/transformer_iter_160000.pth')
+parser.add_argument('--embedding_path', type=str, default='./models/pretrained/embedding_iter_160000.pth')
 
 
 parser.add_argument('--style_interpolation_weights', type=str, default="")
