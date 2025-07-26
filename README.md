@@ -78,7 +78,7 @@ Mambaformer-GLT/
 ```
 ## Testing
 <!--Pretrained models: <br>-->
-#### To transfer images by content and style images, use command to test our model :
+To transfer images by content and style images, use command to test our model :
 ```
 $ python test.py \
   --content_dir <dir_path/of/cnt_img> \
@@ -92,7 +92,7 @@ $ python test.py \
 > Replace placeholder paths `<dir_path/of/...>` with actual directory/file paths.<br>
 > Transfer with **n** content images and **m** style images, output will have **n x m** imgs.
 
-#### Parameter Description
+#### Testing Parameter Description
 - Input Parameters
     - `--content_dir` : Directory path containing your content images
     - `--style_dir` : Directory path containing your style images
@@ -115,6 +115,7 @@ $ python test.py \
     ```
 
 ## Training
+If you want to train your own Mamabformer-GLT, use training command :
 ```
 $ python train.py \
  --content_dir <dir_path/of/cnt_dataset> \
@@ -122,7 +123,7 @@ $ python train.py \
  --save_dir <dir_path/of/model_pth> 
  --batch_size <batch_size>
 ```
-#### Parameter Description
+#### Training Parameter Description
 - Dataset Parameters
     - `--content_dir` : Directory path of content image dataset
     - `--style_dir` : Directory path of your style image dataset
@@ -131,6 +132,7 @@ $ python train.py \
 - Training Parameters
     - `--batch_size` : Batch size for training (e.g., 8, 16, 32)<br>
         Use appropriate batch size based on your GPU memory (common values: 8, 16, 32)
+        
 - Usage Example
     ```
     $ python train.py \
@@ -141,10 +143,10 @@ $ python train.py \
     ```
 > [!NOTE]
 > Other common parameters you can use for training:
-> `--resume_iter`: Iteration checkpoint to resume training from, specify in increments of 10,000 (e.g., 20000, 50000, 100000)
-> `--max_iter` : Maximum of training iterator (default=160k)
-> `--hidden_dim` : Size of the embeddings, dimension of the mambaformer (default=512)
-> `--log_dir` : Directory to save the log (default=./logs)
+> - `--resume_iter`: Iteration checkpoint to resume training from, specify in increments of 10,000 (e.g., 20000, 50000, 100000)
+> - `--max_iter` : Maximum of training iterator (default=160k)
+> - `--hidden_dim` : Size of the embeddings, dimension of the mambaformer (default=512)
+> - `--log_dir` : Directory to save the log (default=./logs)
 
 <!--## Evaluation
 ```
