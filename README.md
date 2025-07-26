@@ -2,7 +2,7 @@
 Mambaformer-GL: Global-Local Transfer Framework with Mamba and Transformer 
 Decoder for Detail-preserving Style Transfer<br>
 
- Authors : [洪子涵 Zi-Han Hong](www.linkedin.com/in/galleta-hong),　[吳怡樂 Yi-Leh Wu](http://faculty.csie.ntust.edu.tw/~ywu/)<br>
+ Authors : [洪子涵 Zi-Han Hong](https://www.linkedin.com/in/galleta-hong),　[吳怡樂 Yi-Leh Wu](http://faculty.csie.ntust.edu.tw/~ywu/)<br>
 
 > National Taiwan University of Science and Technology (NTUST)<br>
 > Department of Computer Science and Information Engineering (CSIE)
