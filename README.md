@@ -38,7 +38,6 @@ $ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
     ```
     Please make sure you have up-to-date NVIDIA drivers supporting CUDA 11.3 at least.
     
-    > [!WARNING]
     > **The ERROR about `causal-conv1d`:**<br>
     > If you get an error msg like `you don't have nvcc`<br>
     > You can install it by [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive), or just use the command directly :<br>
