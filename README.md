@@ -90,9 +90,9 @@ $ python test.py \
   --content_dir <dir_path/of/cnt_img> \
   --style_dir <dir_path/of/sty_img> \
   --output <dir_path/of/output_img> \
-  --decoder_path <path/of/decoder_iter_160000.pth> \
-  --mbfr_path <path/of/mambaformer_iter_160000.pth> \
-  --embedding_path experiments/tmp/<path/of/embedding_iter_160000.pth>
+  --decoder_path <path/of/decoder.pth> \
+  --mbfr_path <path/of/mambaformer.pth> \
+  --embedding_path experiments/tmp/<path/of/embedding.pth>
 ```
 > [!NOTE]
 > Replace placeholder paths `<dir_path/of/...>` with actual directory/file paths.<br>
@@ -105,13 +105,13 @@ $ python test.py \
 - Output Parameters
     - `--output` : Directory path for output images
 - Model Paths
-    - `--decoder_path` : Path to decoder model weights file (decoder_iter_160000.pth)
-    - `--mbfr_path` : Path to MambaFormer model weights file (mambaformer_iter_160000.pth)
-    - `--embedding_path`: Path to embedding layer weights file (embedding_iter_160000.pth)
+    - `--decoder_path` : Path to decoder model weights file (decoder_iter_xxxxx.pth)
+    - `--mbfr_path` : Path to MambaFormer model weights file (mambaformer_iter_xxxxx.pth)
+    - `--embedding_path`: Path to embedding layer weights file (embedding_iter_xxxxx.pth)
 
 - Usage Example<br>
     ```
-    $ python test.py \
+    python test.py \
     --content_dir datasets/test/cnt_img \
     --style_dir datasets/test/sty_img \
     --output datasets/test/output \
@@ -126,7 +126,7 @@ If you want to train your own Mamabformer-GLT, use training command :
 $ python train.py \
  --content_dir <dir_path/of/cnt_dataset> \
  --style_dir <dir_path/of/sty_dataset> \
- --save_dir <dir_path/of/model_pth> 
+ --save_dir <dir_path/of/model_pth> \
  --batch_size <batch_size>
 ```
 #### Training Parameter Description
@@ -141,10 +141,10 @@ $ python train.py \
         
 - Usage Example
     ```
-    $ python train.py \
+    python train.py \
      --style_dir datasets/wikiart  \
      --content_dir datasets/coco2014/images \
-     --save_dir models/experiments
+     --save_dir models/experiments \
      --batch_size 4
     ```
 > [!NOTE]
@@ -154,13 +154,67 @@ $ python train.py \
 > - `--hidden_dim` : Size of the embeddings, dimension of the mambaformer (default=512)
 > - `--log_dir` : Directory to save the log (default=./logs)
 
-<!--## Evaluation
-```
-python eval/eval_loss_modify.py --model_name Mambaformer_stDecoder --content_dir ../datasets/eval/cnt/  --style_dir ../datas
-ets/eval/sty/  --decoder_path models_modify/cape_mambaformer_Res_smth_struct_05_orgCAPE_stDecoder/decoder_iter_160000.pth   --Trans_path models_modify/cape_mambaformer_Res_smth_struct_05_orgCAPE_stDecoder/transformer_iter_160000.pth   --embedding_path models_modify/cape_mambaformer_Res_smth_struct_05_orgCAPE_stDecoder/embedding_iter_160000.pth --output ../datasets/eval/Mambaformer_stDecoder/ --seed 123456
-```
-```
-$ python eval/eval_artfid.py --cnt ../datasets/eval/cnt_eval/ --sty ../datasets/eval/sty_eval/ --tar ../datasets/eval/styTr2_origin/
-```
--->
+## Evaluation
+For Mamabformer-GLT evaluation, we need to copy content and style images by all combination of pairs. Then get the loss and all metrics.
 
+### Preparation 
+1. Copy Images <br>
+    First step is selecting images from both content and style datasets.
+    Here we select 40 images from COCO2014 and 80 from WikiArt :
+    ```
+    # COCO2014 for content
+    python eval/samples_fromDataset.py  --src_dir datasets/coco2014/images/train2014  --tgt_dir datasets/eval/cnt_img  --spl_num 40  --tgt_type dir2dir
+
+    # WikiArt for style
+    python eval/samples_fromDataset.py  --src_dir datasets/wikiart  --tgt_dir datasets/eval/sty_img  --spl_num 80  --tgt_type sub2dir
+    ```
+2. Generate evaluation images<br>
+    Then we generate images (nxm) from both `eval/cnt_img` and `eval/sty_img`.<br>
+    > Here is 40 x 80 = 3200 images in `cnt_img_eval` and `sty_img_eval` respectively.
+    ```
+    python eval/copy_inputs.py --cnt datasets/eval/cnt_img --sty datasets/eval/sty_img
+    ```
+3. Generate Stylized Images from Model<br>
+    ```
+    python eval/eval_loss.py  --model_name Mambaformer-GLT  --content_dir datasets/eval/cnt_img  --style_dir datasets/eval/sty_img/  --decoder_path models/pretrained/decoder_iter_160000.pth   --mbfr_path models/pretrained/mambaformer_iter_160000.pth   --embedding_path models/pretrained/embedding_iter_160000.pth --output datasets/eval/Mambaformer-GLT_eval/ --img_size 256 --seed 123456
+    ```
+    This step will create the target folder `datasets/eval/<model_name>/`, and put the transfered images in.<br>
+    Here is `datasets/eval/Mambaformer-GLT` folder.
+
+    > [!NOTE]
+
+Now, the evaluation data are all prepared!
+
+### # of Params
+Use command to calaulate the number of model parameters : 
+```
+$ python eval/calc_params.py --embedding_path <path/of/embedding.pth> --mbfr_path <path/of/mambaformer.pth> --decoder_path <path/of/decoder.pth>
+```
+Usage Example :
+```
+python eval/calc_params.py --decoder_path models/pretrained/decoder_iter_160000.pth --mbfr_path ./models/pretrained/mambaformer_iter_160000.pth --embedding_path ./models/pretrained/embedding_iter_160000.pth
+```
+> The output will be like:
+> ```
+> --- # of params: ---
+> VGG Encoder trainable : xxx
+> VGG Encoder total : xxx
+> Decoder : xxx
+> Mambaformer : xxx
+> Embedding : xxx
+> 
+> --- MambaformerGLT TOTAL ---
+> total params: xx,xxx,xxx
+> ```
+
+###  Quantitative Evaluation
+Use command for evaluation metrics :
+```
+$ python eval/eval_artfid.py --cnt datasets/eval/cnt_img_eval/ --sty datasets/eval/sty_img_eval/ --tar datasets/eval/Mambaformer-GLT/
+```
+The `--tar` is a folder that you generated stylized images from model (Step 3 in Evaluation Preparation).
+After a moment, you will see the output like this :
+```
+ArtFID: xx.xxxx FID: xx.xxxx LPIPS: x.xxxx LPIPS_gray: x.xxxx
+CFSD: x.xxxx
+```

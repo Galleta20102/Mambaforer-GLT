@@ -20,8 +20,8 @@ import shutil
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 # Import Directly
-from models import transformer
-from models import StyTR
+from models import Mambaformer
+from models import MambaformerGLT
 
 parser = argparse.ArgumentParser()
 # Basic options
@@ -42,10 +42,10 @@ parser.add_argument('--seed', default=777, type=int,
 parser.add_argument('--model_name', type=str, default='mambaformer')
 parser.add_argument('--img_size', type=int, default=256)
 
-parser.add_argument('--vgg', type=str, default='./experiments/vgg_normalised.pth')
-parser.add_argument('--decoder_path', type=str, default='experiments/decoder_iter_160000.pth') 
-parser.add_argument('--Trans_path', type=str, default='experiments/transformer_iter_160000.pth')
-parser.add_argument('--embedding_path', type=str, default='experiments/embedding_iter_160000.pth')
+parser.add_argument('--vgg', type=str, default='./models/pretrained/vgg_normalised.pth')
+parser.add_argument('--decoder_path', type=str, default='./models/pretrained/decoder_iter_160000.pth') 
+parser.add_argument('--mbfr_path', type=str, default='./models/pretrained/mambaformer_iter_160000.pth')
+parser.add_argument('--embedding_path', type=str, default='./models/pretrained/embedding_iter_160000.pth')
 
 
 parser.add_argument('--style_interpolation_weights', type=str, default="")
@@ -53,26 +53,26 @@ parser.add_argument('--a', type=float, default=1.0)
 parser.add_argument('--position_embedding', default='sine', type=str, choices=('sine', 'learned'),
                         help="Type of positional embedding to use on top of the image features")
 parser.add_argument('--hidden_dim', default=512, type=int,
-                        help="Size of the embeddings (dimension of the transformer)")
+                        help="Size of the embeddings (dimension of the mambaformer)")
 args = parser.parse_args()
 
 def load_pretrained(args):
     #vgg = models_helper.vgg
-    vgg = StyTR.vgg
+    vgg = MambaformerGLT.vgg
     vgg.load_state_dict(torch.load(args.vgg))
     vgg = nn.Sequential(*list(vgg.children())[:44])
 
-    decoder = StyTR.decoder
-    Trans = transformer.Transformer() # m11215021
-    embedding = StyTR.PatchEmbed()
+    decoder = MambaformerGLT.decoder
+    mbfr = Mambaformer.mambaformer()
+    embedding = MambaformerGLT.PatchEmbed()
 
     decoder_path = args.decoder_path
-    Trans_path = args.Trans_path
+    mbfr_path = args.mbfr_path
     embedding_path = args.embedding_path
         
 
     decoder.eval()
-    Trans.eval()
+    mbfr.eval()
     vgg.eval()
     from collections import OrderedDict
     new_state_dict = OrderedDict()
@@ -83,11 +83,11 @@ def load_pretrained(args):
     decoder.load_state_dict(new_state_dict)
 
     new_state_dict = OrderedDict()
-    state_dict = torch.load(Trans_path)
+    state_dict = torch.load(mbfr_path)
     for k, v in state_dict.items():
         namekey = k
         new_state_dict[namekey] = v
-    Trans.load_state_dict(new_state_dict)
+    mbfr.load_state_dict(new_state_dict)
 
     new_state_dict = OrderedDict()
     state_dict = torch.load(embedding_path)
@@ -97,10 +97,10 @@ def load_pretrained(args):
     embedding.load_state_dict(new_state_dict)
 
     with torch.no_grad():
-        network = StyTR.StyTrans(vgg,decoder,embedding,Trans,args)
+        network = MambaformerGLT.mambaformerGLT(vgg,decoder,embedding,mbfr,args)
     
     print(f"Loaded Embedding checkpoints from {embedding_path}")
-    print(f"Loaded Mamba checkpoints from {Trans_path}")
+    print(f"Loaded Mamba checkpoints from {mbfr_path}")
     print(f"Loaded CNN decoder checkpoints from {decoder_path}")
     return network
 
@@ -208,7 +208,7 @@ for content_path in tqdm(content_paths):
         content = content.to(device).unsqueeze(0)
         
         with torch.no_grad():
-            output, loss_c, loss_s, _, _ = network(content,style) 
+            output, loss_c, loss_s, _, _, _ = network(content,style) 
     
         content_loss += loss_c
         style_loss += loss_s

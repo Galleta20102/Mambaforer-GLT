@@ -198,3 +198,4 @@ cython_debug/
 /logs
 *.pth
 *.jpg
+*.png

@@ -66,7 +66,7 @@ parser.add_argument('--output', type=str, default='output',
                     help='Directory to save the output image(s)')
 parser.add_argument('--vgg', type=str, default='./models/pretrained/vgg_normalised.pth')
 parser.add_argument('--decoder_path', type=str, default='./models/pretrained/decoder_iter_160000.pth') 
-parser.add_argument('--mbfr_path', type=str, default='./models/pretrained/transformer_iter_160000.pth')
+parser.add_argument('--mbfr_path', type=str, default='./models/pretrained/mambaformer_iter_160000.pth')
 parser.add_argument('--embedding_path', type=str, default='./models/pretrained/embedding_iter_160000.pth')
 
 
@@ -75,7 +75,7 @@ parser.add_argument('--a', type=float, default=1.0)
 parser.add_argument('--position_embedding', default='sine', type=str, choices=('sine', 'learned'),
                         help="Type of positional embedding to use on top of the image features")
 parser.add_argument('--hidden_dim', default=512, type=int,
-                        help="Size of the embeddings (dimension of the transformer)")
+                        help="Size of the embeddings (dimension of the mambaformer)")
 args = parser.parse_args()
 
 # Advanced options
@@ -112,8 +112,7 @@ vgg.load_state_dict(torch.load(args.vgg))
 vgg = nn.Sequential(*list(vgg.children())[:44])
 
 decoder = MambaformerGLT.decoder
-mbfr = Mambaformer.mambaformer()  # m11215021
-
+mbfr = Mambaformer.mambaformer() 
 embedding = MambaformerGLT.PatchEmbed()
 
 decoder.eval()
