@@ -32,7 +32,8 @@ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
     conda env create -f env.yaml
     conda activate MambaformerGLT
     ```
-> [!CAUTION] **[Troubleshooting] The ERROR about `causal-conv1d`:**<br>
+> [!CAUTION]
+**The ERROR about `causal-conv1d`:**<br>
 > If you get an error msg like `nvcc was not found`<br>
 > ![Sample Error Msg while create env by ymal](<figure/error_causal-conv1d.png>)
 > You can install it at [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive), or just use the command directly (the version need to ***>= 11.6***) :<br>
