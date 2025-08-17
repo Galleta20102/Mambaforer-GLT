@@ -88,7 +88,13 @@ You can download pretrained models, and put them into `models/pretrained/` :
 - [decoder_iter_160000](https://drive.google.com/file/d/1HmlJHQ11-h-9iYm1TY0I1c-42cbSxCAp/view?usp=sharing)
 - [mambaformer_iter_160000](https://drive.google.com/file/d/16FeHGZqg8lTqPNbJhZTZGudZiD9n5ZSy/view?usp=sharing)<br>
 
-To transfer images by content and style images, use command to test our model :
+To transfer images using content and style images, use the following command :
+```
+python test.py --content_dir datasets/test/cnt_img --style_dir datasets/test/sty_img --output datasets/test/output  --decoder_path models/pretrained/decoder_iter_160000.pth --mbfr_path models/pretrained/mambaformer_iter_160000.pth --embedding_path models/pretrained/embedding_iter_160000.pth
+```
+
+### Command Format
+For different paths, use this template:
 ```
 $ python test.py \
   --content_dir <dir_path/of/cnt_img> \
@@ -100,9 +106,8 @@ $ python test.py \
 ```
 > [!NOTE]
 > Please replace placeholder paths `<dir_path/of/...>` with actual directory/file paths.<br>
-> Transfer with **n** content images and **m** style images, output will have **n x m** imgs.
+> Transfer with **n** content images and **m** style imageswill output **n × m** images.
 
-#### Testing Parameter Description
 - Input Parameters
     - `--content_dir` : Directory path containing your content images
     - `--style_dir` : Directory path containing your style images
@@ -113,13 +118,14 @@ $ python test.py \
     - `--mbfr_path` : Path to MambaFormer model weights file (mambaformer_iter_xxxxx.pth)
     - `--embedding_path`: Path to embedding layer weights file (embedding_iter_xxxxx.pth)
 
-### Usage Example for Testing
-```
-python test.py --content_dir datasets/test/cnt_img --style_dir datasets/test/sty_img --output datasets/test/output  --decoder_path models/pretrained/decoder_iter_160000.pth --mbfr_path models/pretrained/mambaformer_iter_160000.pth --embedding_path models/pretrained/embedding_iter_160000.pth
-```
 
 ## Training
-If you want to train your own Mamabformer-GLT, use training command :
+If you want to train your own Mambaformer-GLT, use the following command :
+```
+python train.py  --style_dir datasets/wikiart --content_dir datasets/coco2014/images  --save_dir models/experiments  --batch_size 4
+```
+### Command Format
+For different paths and parameters, use this template:
 ```
 $ python train.py \
  --content_dir <dir_path/of/cnt_dataset> \
@@ -127,7 +133,6 @@ $ python train.py \
  --save_dir <dir_path/of/model_pth> \
  --batch_size <batch_size>
 ```
-#### Training Parameter Description
 - Dataset Parameters
     - `--content_dir` : Directory path of content image dataset
     - `--style_dir` : Directory path of your style image dataset
@@ -136,16 +141,12 @@ $ python train.py \
 - Training Parameters
     - `--batch_size` : Batch size for training (e.g., 8, 16, 32)<br>
         Use appropriate batch size based on your GPU memory (common values: 8, 16, 32)
-        
-### Usage Example for Training
-```
-python train.py  --style_dir datasets/wikiart --content_dir datasets/coco2014/images  --save_dir models/experiments  --batch_size 4
-```
+
 > [!TIP]
 > Other common parameters you can use for training:
 > - `--resume_iter`: Iteration checkpoint to resume training from, specify in increments of 10,000 (e.g., 20000, 50000, 100000)
-> - `--max_iter` : Maximum of training iterator (default=160k)
-> - `--hidden_dim` : Size of the embeddings, dimension of the mambaformer (default=512)
+> - `--max_iter` : Maximum number of training iterator (default=160k)
+> - `--hidden_dim` : Size of the embeddings, dimension of the Mambaformer (default=512)
 > - `--log_dir` : Directory to save the log (default=./logs)
 
 ## Evaluation
@@ -168,7 +169,7 @@ For Mamabformer-GLT evaluation, we need to copy content and style images by all 
     ```
     python eval/copy_inputs.py --cnt datasets/eval/cnt_img --sty datasets/eval/sty_img
     ```
-3. **Generate Stylized Images from Model**<br><br>
+3. <a name="gen-eval-output">**Generate Stylized Images from Model**</a><br><br>
     ```
     python eval/eval_loss.py --content_dir datasets/eval/cnt_img  --style_dir datasets/eval/sty_img/  --decoder_path models/pretrained/decoder_iter_160000.pth   --mbfr_path models/pretrained/mambaformer_iter_160000.pth   --embedding_path models/pretrained/embedding_iter_160000.pth --output datasets/eval/Mambaformer-GLT/ --img_size 256 --seed 123456
     ```
@@ -181,31 +182,32 @@ Now, the evaluation data and output images are all prepared!
 ### # of Params
 Use command to calaulate the number of model parameters : 
 ```
-$ python eval/calc_params.py --embedding_path <path/of/embedding.pth> --mbfr_path <path/of/mambaformer.pth> --decoder_path <path/of/decoder.pth>
+python eval/calc_params.py --embedding_path ./models/pretrained/embedding_iter_160000.pth --mbfr_path ./models/pretrained/mambaformer_iter_160000.pth --decoder_path models/pretrained/decoder_iter_160000.pth 
 ```
-Usage Example :
+- `--decoder_path` : Path to decoder model weights file (decoder_iter_xxxxx.pth)
+- `--mbfr_path` : Path to MambaFormer model weights file (mambaformer_iter_xxxxx.pth)
+- `--embedding_path`: Path to embedding layer weights file (embedding_iter_xxxxx.pth)
+
+
+The output will be like :
 ```
-python eval/calc_params.py --decoder_path models/pretrained/decoder_iter_160000.pth --mbfr_path ./models/pretrained/mambaformer_iter_160000.pth --embedding_path ./models/pretrained/embedding_iter_160000.pth
+--- # of params: ---
+VGG Encoder trainable : xxx
+VGG Encoder total : xxx
+Decoder : xxx
+Mambaformer : xxx
+Embedding : xxx
+
+--- MambaformerGLT TOTAL ---
+total params: xx,xxx,xxx
 ```
-> The output will be like:
-> ```
-> --- # of params: ---
-> VGG Encoder trainable : xxx
-> VGG Encoder total : xxx
-> Decoder : xxx
-> Mambaformer : xxx
-> Embedding : xxx
-> 
-> --- MambaformerGLT TOTAL ---
-> total params: xx,xxx,xxx
-> ```
 
 ###  Quantitative Evaluation
 Use command for evaluation metrics :
 ```
 python eval/eval_artfid.py --cnt datasets/eval/cnt_img_eval/ --sty datasets/eval/sty_img_eval/ --tar datasets/eval/Mambaformer-GLT/
 ```
-The `--tar` is a folder that you generated stylized images from model (Step 3 in Evaluation Preparation).<br>
+The `--tar` is a folder that you [generated stylized images](#gen-eval-output) from model.<br>
 After a moment, you will see the output like this :
 ```
 ArtFID: xx.xxxx FID: xx.xxxx LPIPS: x.xxxx LPIPS_gray: x.xxxx

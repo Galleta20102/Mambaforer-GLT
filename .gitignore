@@ -194,7 +194,7 @@ cython_debug/
 .cursorindexingignore
 
 # Model training
-/models/experiments
+/models/experiments/*
 /logs
 *.pth
 *.jpg
