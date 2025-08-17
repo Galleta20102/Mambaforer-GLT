@@ -42,12 +42,12 @@ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
 > ```
 > Then remove the failded environment by `conda remove --name MambaformerGLT --all`, and [create environment](#conda-environment) again.
 
-- Then install PyTorch/CUDA dependent packages (depends on your CUDA) :
+- Install PyTorch/CUDA dependent packages (depends on your CUDA) :
     ```
     pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 --index-url https://download.pytorch.org/whl/cu118
     pip install mamba-ssm==1.2.0
     ```
-    Please make sure you have up-to-date NVIDIA drivers supporting CUDA 11.3 at least.<br>
+    Please make sure you have up-to-date NVIDIA drivers supporting CUDA 11.3 at least.<br><br>
 - Don't forget to deactivate the virtual environment after you perform all experiments :
     ```
     deactivate
@@ -56,7 +56,7 @@ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
 ## Getting Dataset
 Download style and content datasets then put into the folder `datasets/` .<br>
 Style image dataset is WikiArt collected from [WIKIART](https://www.wikiart.org/) - [download](https://www.kaggle.com/datasets/steubk/wikiart)<br>
-Content image dataset is COCO2014 - [download](https://cocodataset.org/#download)<br><br>
+Content image dataset is COCO2014 - [download](https://cocodataset.org/#download)<br>
 
 Directory structure may be like:
 ```
@@ -203,7 +203,7 @@ python eval/calc_params.py --decoder_path models/pretrained/decoder_iter_160000.
 ###  Quantitative Evaluation
 Use command for evaluation metrics :
 ```
-$ python eval/eval_artfid.py --cnt datasets/eval/cnt_img_eval/ --sty datasets/eval/sty_img_eval/ --tar datasets/eval/Mambaformer-GLT/
+python eval/eval_artfid.py --cnt datasets/eval/cnt_img_eval/ --sty datasets/eval/sty_img_eval/ --tar datasets/eval/Mambaformer-GLT/
 ```
 The `--tar` is a folder that you generated stylized images from model (Step 3 in Evaluation Preparation).<br>
 After a moment, you will see the output like this :
