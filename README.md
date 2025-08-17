@@ -24,29 +24,38 @@ Our method achieves more stable stylization effects with excellent preservation 
 ## Environment Setup
 ### Clone repository by :
 ```
-$ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
+git clone https://github.com/Galleta20102/Mambaforer-GLT.git
 ```
 ### Conda environment
-- Create a conda environment by `env.yml` and activate it:
+- Create a conda environment by `env.yaml` and activate it:
     ```
-    $ conda env create -f env.yml
-    $ conda activate MambaformerGLT
+    conda env create -f env.yaml
+    conda activate MambaformerGLT
     ```
-- Then install PyTorch (depends on your CUDA) :
+    > [!WARNING] **The ERROR about `causal-conv1d`:**<br>
+    > If you get an error msg like `nvcc was not found`<br>
+    > ![Result presentation of Mamabaformer-GLT](<figure/image.png>)
+    > You can install it at [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive), or just use the command directly (the version need to ***>= 11.6***) :<br>
+    > ```
+    > sudo apt install nvidia-cuda-toolkit
+    >
+    > # Checking for Cuda compilation tools version >= 11.6
+    > nvcc -V
+    > ```
+    > Then remove the failded environment and setup again :
+    > ```
+    > conda remove --name MambaformerGLT --all
+    > conda env create -f env.yaml
+    > ```
+- Then install PyTorch/CUDA dependent packages (depends on your CUDA) :
     ```
-    $ pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 --index-url https://download.pytorch.org/whl/cu118
+    pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 --index-url https://download.pytorch.org/whl/cu118
+    pip install mamba-ssm==1.2.0
     ```
     Please make sure you have up-to-date NVIDIA drivers supporting CUDA 11.3 at least.
-    
-    > **The ERROR about `causal-conv1d`:**<br>
-    > If you get an error msg like `you don't have nvcc`<br>
-    > You can install it by [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive), or just use the command directly :<br>
-    > ```
-    > $ sudo apt install nvidia-cuda-toolkit
-    > ```
-- After you have performed all experiments, don't forget to close the virtual environment using :
+- Don't forget to close the virtual environment after you perform all experiments :
     ```
-    $ deactivate
+    deactivate
     ```
 
 ## Getting Dataset
@@ -111,13 +120,7 @@ $ python test.py \
 
 - Usage Example<br>
     ```
-    python test.py \
-    --content_dir datasets/test/cnt_img \
-    --style_dir datasets/test/sty_img \
-    --output datasets/test/output \
-    --decoder_path models/pretrained/decoder_iter_160000.pth \
-    --mbfr_path models/pretrained/mambaformer_iter_160000.pth \
-    --embedding_path models/pretrained/embedding_iter_160000.pth
+    python test.py --content_dir datasets/test/cnt_img --style_dir datasets/test/sty_img --output datasets/test/output  --decoder_path models/pretrained/decoder_iter_160000.pth --mbfr_path models/pretrained/mambaformer_iter_160000.pth --embedding_path models/pretrained/embedding_iter_160000.pth
     ```
 
 ## Training
@@ -176,14 +179,14 @@ For Mamabformer-GLT evaluation, we need to copy content and style images by all 
     ```
 3. Generate Stylized Images from Model<br>
     ```
-    python eval/eval_loss.py  --model_name Mambaformer-GLT  --content_dir datasets/eval/cnt_img  --style_dir datasets/eval/sty_img/  --decoder_path models/pretrained/decoder_iter_160000.pth   --mbfr_path models/pretrained/mambaformer_iter_160000.pth   --embedding_path models/pretrained/embedding_iter_160000.pth --output datasets/eval/Mambaformer-GLT_eval/ --img_size 256 --seed 123456
+    python eval/eval_loss.py --content_dir datasets/eval/cnt_img  --style_dir datasets/eval/sty_img/  --decoder_path models/pretrained/decoder_iter_160000.pth   --mbfr_path models/pretrained/mambaformer_iter_160000.pth   --embedding_path models/pretrained/embedding_iter_160000.pth --output datasets/eval/Mambaformer-GLT/ --img_size 256 --seed 123456
     ```
-    This step will create the target folder `datasets/eval/<model_name>/`, and put the transfered images in.<br>
-    Here is `datasets/eval/Mambaformer-GLT` folder.
+    This step will create the target folder `datasets/eval/Mambaformer-GLT/` containing all transfered images.<br>
+    > [!NOTE] 
+    > Set `--img_size 256` just for quickly evaluation.<br>
+    > In testing, model outputs 512x512 resolution images. 
 
-    > [!NOTE]
-
-Now, the evaluation data are all prepared!
+Now, the evaluation data and output images are all prepared!
 
 ### # of Params
 Use command to calaulate the number of model parameters : 
@@ -212,7 +215,7 @@ Use command for evaluation metrics :
 ```
 $ python eval/eval_artfid.py --cnt datasets/eval/cnt_img_eval/ --sty datasets/eval/sty_img_eval/ --tar datasets/eval/Mambaformer-GLT/
 ```
-The `--tar` is a folder that you generated stylized images from model (Step 3 in Evaluation Preparation).
+The `--tar` is a folder that you generated stylized images from model (Step 3 in Evaluation Preparation).<br>
 After a moment, you will see the output like this :
 ```
 ArtFID: xx.xxxx FID: xx.xxxx LPIPS: x.xxxx LPIPS_gray: x.xxxx
