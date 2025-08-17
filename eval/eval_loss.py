@@ -39,7 +39,6 @@ parser.add_argument('--output_dir', type=str, default='',
                     help='Directory to save the output image(s)')
 parser.add_argument('--seed', default=777, type=int,
                     help="Seed for reproducibility")
-parser.add_argument('--model_name', type=str, default='mambaformer')
 parser.add_argument('--img_size', type=int, default=256)
 
 parser.add_argument('--vgg', type=str, default='./models/pretrained/vgg_normalised.pth')
@@ -155,9 +154,6 @@ def content_transform():
     transform = transforms.Compose(transform_list)
     return transform
 
-
-
-print("Name: ", args.model_name)
 # Advanced options
 content_size=args.img_size
 style_size=args.img_size
@@ -222,6 +218,5 @@ for content_path in tqdm(content_paths):
             save_image(output, output_name)
 
 print("Image size: ", args.img_size)
-print(args.model_name)
 print(f"Content loss total: {content_loss.item()} - Style loss total: {style_loss.item()}")
 print(f"Content loss mean: {content_loss.item()/(len(content_paths)*len(style_paths))} - Style loss mean: {style_loss.item()/(len(content_paths)*len(style_paths))}")
