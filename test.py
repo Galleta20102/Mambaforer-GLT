@@ -15,6 +15,7 @@ import models.MambaformerGLT  as  MambaformerGLT
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from function import normal
+from tqdm import tqdm
 import numpy as np
 import time
 
@@ -34,7 +35,6 @@ def test_transform(size, crop):
 def style_transform(h,w):
     k = (h,w)
     size = int(np.max(k))
-    print(type(size))
     transform_list = []    
     transform_list.append(transforms.CenterCrop((h,w)))
     transform_list.append(transforms.ToTensor())
@@ -64,10 +64,10 @@ parser.add_argument('--style_dir', type=str,
                     help='Directory path to a batch of style images')
 parser.add_argument('--output', type=str, default='output',
                     help='Directory to save the output image(s)')
-parser.add_argument('--vgg', type=str, default='./experiments/vgg_normalised.pth')
-parser.add_argument('--decoder_path', type=str, default='experiments/decoder_iter_160000.pth') 
-parser.add_argument('--mbfr_path', type=str, default='experiments/transformer_iter_160000.pth')
-parser.add_argument('--embedding_path', type=str, default='experiments/embedding_iter_160000.pth')
+parser.add_argument('--vgg', type=str, default='./models/pretrained/vgg_normalised.pth')
+parser.add_argument('--decoder_path', type=str, default='./models/pretrained/decoder_iter_160000.pth') 
+parser.add_argument('--mbfr_path', type=str, default='./models/pretrained/mambaformer_iter_160000.pth')
+parser.add_argument('--embedding_path', type=str, default='./models/pretrained/embedding_iter_160000.pth')
 
 
 parser.add_argument('--style_interpolation_weights', type=str, default="")
@@ -75,7 +75,7 @@ parser.add_argument('--a', type=float, default=1.0)
 parser.add_argument('--position_embedding', default='sine', type=str, choices=('sine', 'learned'),
                         help="Type of positional embedding to use on top of the image features")
 parser.add_argument('--hidden_dim', default=512, type=int,
-                        help="Size of the embeddings (dimension of the transformer)")
+                        help="Size of the embeddings (dimension of the mambaformer)")
 args = parser.parse_args()
 
 # Advanced options
@@ -112,8 +112,7 @@ vgg.load_state_dict(torch.load(args.vgg))
 vgg = nn.Sequential(*list(vgg.children())[:44])
 
 decoder = MambaformerGLT.decoder
-mbfr = Mambaformer.mambaformer()  # m11215021
-
+mbfr = Mambaformer.mambaformer() 
 embedding = MambaformerGLT.PatchEmbed()
 
 decoder.eval()
@@ -156,10 +155,8 @@ total_pairs = len(content_paths) * len(style_paths)  # Total number of content-s
 content_tf = test_transform(content_size, crop)
 style_tf = test_transform(style_size, crop)
 
-for content_path in content_paths:
-    for style_path in style_paths:
-        print(content_path)
-       
+for content_path in tqdm(content_paths):
+    for style_path in tqdm(style_paths):      
       
         content_tf1 = content_transform()       
         content = content_tf(Image.open(content_path).convert("RGB"))
