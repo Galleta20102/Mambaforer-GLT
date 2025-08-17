@@ -38,20 +38,16 @@ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
 > You can install it at [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive), or just use the command directly (the version need to ***>= 11.6***) :<br>
 > ```
 > sudo apt install nvidia-cuda-toolkit
->
-> # Checking for Cuda compilation tools version >= 11.6
-> nvcc -V
+> nvcc -V  # Checking for Cuda compilation tools version >= 11.6
 > ```
-> Then remove the failded environment by following command, and [create environment](#conda-environment) again :
-> ```
-> conda remove --name MambaformerGLT --all
-> ```
+> Then remove the failded environment by `conda remove --name MambaformerGLT --all`, and [create environment](#conda-environment) again.
+
 - Then install PyTorch/CUDA dependent packages (depends on your CUDA) :
     ```
     pip install torch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 --index-url https://download.pytorch.org/whl/cu118
     pip install mamba-ssm==1.2.0
     ```
-    Please make sure you have up-to-date NVIDIA drivers supporting CUDA 11.3 at least.
+    Please make sure you have up-to-date NVIDIA drivers supporting CUDA 11.3 at least.<br>
 - Don't forget to deactivate the virtual environment after you perform all experiments :
     ```
     deactivate
