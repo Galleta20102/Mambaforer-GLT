@@ -16,7 +16,7 @@ This paper is proposed on style transfer task and based on [StyTR<sup>2</sup>](h
 Our method achieves more stable stylization effects with excellent preservation in detail, particularly in retaining key features such as facial characteristics so that avoids the Uncanny Valley Effect while requiring lower computational resources.<br>
 
 ## Result Presentation
-![Result presentation of Mamabaformer-GLT](<figure/results_presentation.png>)
+![Result presentation of Mamabaformer-GLT](<figure/results_prsnt.png>)
 
 ## Architecture
 ![Mambaformer-GLT Architecture](<figure/architecture.png>)
@@ -34,7 +34,7 @@ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
     ```
     > [!WARNING] **The ERROR about `causal-conv1d`:**<br>
     > If you get an error msg like `nvcc was not found`<br>
-    > ![Result presentation of Mamabaformer-GLT](<figure/image.png>)
+    > ![Sample Error Msg while create env by ymal](<figure/error_causal-conv1d.png>)
     > You can install it at [CUDA Toolkit Archive](https://developer.nvidia.com/cuda-toolkit-archive), or just use the command directly (the version need to ***>= 11.6***) :<br>
     > ```
     > sudo apt install nvidia-cuda-toolkit
@@ -144,11 +144,7 @@ $ python train.py \
         
 - Usage Example
     ```
-    python train.py \
-     --style_dir datasets/wikiart  \
-     --content_dir datasets/coco2014/images \
-     --save_dir models/experiments \
-     --batch_size 4
+    python train.py  --style_dir datasets/wikiart --content_dir datasets/coco2014/images  --save_dir models/experiments  --batch_size 4
     ```
 > [!NOTE]
 > Other common parameters you can use for training:
@@ -182,7 +178,7 @@ For Mamabformer-GLT evaluation, we need to copy content and style images by all 
     python eval/eval_loss.py --content_dir datasets/eval/cnt_img  --style_dir datasets/eval/sty_img/  --decoder_path models/pretrained/decoder_iter_160000.pth   --mbfr_path models/pretrained/mambaformer_iter_160000.pth   --embedding_path models/pretrained/embedding_iter_160000.pth --output datasets/eval/Mambaformer-GLT/ --img_size 256 --seed 123456
     ```
     This step will create the target folder `datasets/eval/Mambaformer-GLT/` containing all transfered images.<br>
-    > [!NOTE] 
+    > [!NOTE] <br>
     > Set `--img_size 256` just for quickly evaluation.<br>
     > In testing, model outputs 512x512 resolution images. 
 
