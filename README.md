@@ -90,7 +90,7 @@ You can download pretrained models, and put them into `models/pretrained/` :
 
 To transfer images using content and style images, use the following command :
 ```
-python test.py --content_dir datasets/test/cnt_img --style_dir datasets/test/sty_img --output datasets/test/output  --decoder_path models/pretrained/decoder_iter_160000.pth --mbfr_path models/pretrained/mambaformer_iter_160000.pth --embedding_path models/pretrained/embedding_iter_160000.pth
+python test.py --content_dir datasets/test/cnt_img --style_dir datasets/test/sty_img --output datasets/test/output  --embedding_path models/pretrained/embedding_iter_160000.pth --mbfr_path models/pretrained/mambaformer_iter_160000.pth --decoder_path models/pretrained/decoder_iter_160000.pth 
 ```
 
 ### Command Format
@@ -100,9 +100,9 @@ $ python test.py \
   --content_dir <dir_path/of/cnt_img> \
   --style_dir <dir_path/of/sty_img> \
   --output <dir_path/of/output_img> \
-  --decoder_path <path/of/decoder.pth> \
+  --embedding_path experiments/tmp/<path/of/embedding.pth> \
   --mbfr_path <path/of/mambaformer.pth> \
-  --embedding_path experiments/tmp/<path/of/embedding.pth>
+  --decoder_path <path/of/decoder.pth>
 ```
 > [!NOTE]
 > Please replace placeholder paths `<dir_path/of/...>` with actual directory/file paths.<br>
@@ -114,9 +114,9 @@ $ python test.py \
 - Output Parameters
     - `--output` : Directory path for output images
 - Model Paths
-    - `--decoder_path` : Path to decoder model weights file (decoder_iter_xxxxx.pth)
-    - `--mbfr_path` : Path to MambaFormer model weights file (mambaformer_iter_xxxxx.pth)
     - `--embedding_path`: Path to embedding layer weights file (embedding_iter_xxxxx.pth)
+    - `--mbfr_path` : Path to MambaFormer model weights file (mambaformer_iter_xxxxx.pth)
+    - `--decoder_path` : Path to decoder model weights file (decoder_iter_xxxxx.pth)
 
 
 ## Training
@@ -137,7 +137,7 @@ $ python train.py \
     - `--content_dir` : Directory path of content image dataset
     - `--style_dir` : Directory path of your style image dataset
 - Output Parameters
-    - `--save_dir` : Directory path to save trained model weights (.pth files)
+    - `--save_dir` : Directory path to save trained model weights ( *.pth* files)
 - Training Parameters
     - `--batch_size` : Batch size for training (e.g., 8, 16, 32)<br>
         Use appropriate batch size based on your GPU memory (common values: 8, 16, 32)
