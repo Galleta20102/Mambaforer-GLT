@@ -54,7 +54,7 @@ git clone https://github.com/Galleta20102/Mambaforer-GLT.git
     ```
 
 ## Getting Dataset
-Download style and content datasets then put into the folder `datasets/` .<br>
+Download the style and content datasets, then create a `datasets/` folder in the project root and place the downloaded datasets inside it.<br>
 Style image dataset is WikiArt collected from [WIKIART](https://www.wikiart.org/) - [download](https://www.kaggle.com/datasets/steubk/wikiart)<br>
 Content image dataset is COCO2014 - [download](https://cocodataset.org/#download)<br>
 
@@ -170,12 +170,15 @@ For Mamabformer-GLT evaluation, we need to copy content and style images by all 
     python eval/copy_inputs.py --cnt datasets/eval/cnt_img --sty datasets/eval/sty_img
     ```
 3. <a name="gen-eval-output">**Generate Stylized Images from Model**</a><br><br>
+    Please replace placeholder paths `<path_of_pth>` with actual directory/file paths.<br>
+    It can be the pretrained model path `models/pretrained`, the model trained by yourself `models/experiments` or other path you want.
     ```
-    python eval/eval_loss.py --content_dir datasets/eval/cnt_img  --style_dir datasets/eval/sty_img/  --decoder_path models/pretrained/decoder_iter_160000.pth   --mbfr_path models/pretrained/mambaformer_iter_160000.pth   --embedding_path models/pretrained/embedding_iter_160000.pth --output datasets/eval/Mambaformer-GLT/ --img_size 256 --seed 123456
+    python eval/eval_loss.py --content_dir datasets/eval/cnt_img  --style_dir datasets/eval/sty_img/  --decoder_path <path_of_pth>/decoder_iter_160000.pth   --mbfr_path <path_of_pth>/mambaformer_iter_160000.pth   --embedding_path <path_of_pth>/embedding_iter_160000.pth --output datasets/eval/Mambaformer-GLT/ --img_size 256 --seed 123456
     ```
-    This step will create the target folder `datasets/eval/Mambaformer-GLT/` containing all transfered images.<br>
+
+    This step will create the target folder `datasets/eval/Mambaformer-GLT/` containing all transferred images.<br>
     > Set `--img_size 256` just for quickly evaluation.<br>
-    > In testing, model outputs 512x512 resolution images. 
+    > In testing, model outputs 512 × 512 resolution images. 
 
 Now, the evaluation data and output images are all prepared!
 
@@ -192,14 +195,14 @@ python eval/calc_params.py --embedding_path ./models/pretrained/embedding_iter_1
 The output will be like :
 ```
 --- # of params: ---
-VGG Encoder trainable : xxx
-VGG Encoder total : xxx
-Decoder : xxx
-Mambaformer : xxx
-Embedding : xxx
+VGG Encoder trainable : 0
+VGG Encoder total : 12,944,972
+Decoder : 3,505,219
+Mambaformer : 21,332,740
+Embedding : 98,816
 
 --- MambaformerGLT TOTAL ---
-total params: xx,xxx,xxx
+total params: 37,881,747
 ```
 
 ###  Quantitative Evaluation
